@@ -150,14 +150,15 @@ public class GameState
         {
             if(currentPhase == Phase.PLAYER1SETUP_POISON ||
             currentPhase == Phase.PLAYER1_EXTRAHEART ||
+            currentPhase == Phase.PLAYER1_EXTRAPICK ||
             currentPhase == Phase.PLAYER1_COMPUTERPICK ||
             currentPhase == Phase.PLAYER1PICK_POISON)
             {
                 return player1;
             }
-
             else if(currentPhase == Phase.PLAYER2SETUP_POISON ||
             currentPhase == Phase.PLAYER2_EXTRAHEART ||
+            currentPhase == Phase.PLAYER2_EXTRAPICK ||
             currentPhase == Phase.PLAYER2_COMPUTERPICK ||
             currentPhase == Phase.PLAYER2PICK_POISON)
             {

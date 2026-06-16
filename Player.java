@@ -6,12 +6,17 @@ public class Player
     private int hearts;
     private int extraTurns;
     private String playerName;
+    private Image[] spriteList;
+	private Image sprite;
 
-    public Player(String playerName)
+
+    public Player(String playerName, Image[] spriteNames)
     {
         this.playerName = playerName;
         this.hearts = 3;
         this.extraTurns = 0;
+        spriteList = spriteNames;
+        sprite = spriteList[3];
     }
 
     public void Effect(Card card)
@@ -73,6 +78,11 @@ public class Player
     {
         return playerName;
     }
+	public void draw(Graphics g, int posX, int posY)
+	{
+		Graphics2D g2 = (Graphics2D) g;
+		g2.drawImage(sprite, posX, posY, null);
+	}
 }
 
 
