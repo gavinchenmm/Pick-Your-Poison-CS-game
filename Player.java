@@ -6,32 +6,36 @@ public class Player
     private int hearts;
     private int extraTurns;
     private String playerName;
+    private Image[] spriteList;
+	private Image sprite;
 
-    public Player(String playerName)
+
+    public Player(String playerName, Image[] spriteNames)
     {
         this.playerName = playerName;
         this.hearts = 3;
         this.extraTurns = 0;
+        spriteList = spriteNames;
     }
 
     public void Effect(Card card)
     {
         Card.cardType type = card.getCardType();
-        if(type.equals("damage"))
+        if(type == Card.cardType.Poison)
         {
             hearts--;
         }
-        else if(type.equals("heal"))
+        else if(type == Card.cardType.E_Heart)
         {
             hearts++;
         }
-        else if(type.equals("extraTurn"))
+        else if(type == Card.cardType.E_Pick)
         {
             extraTurns++;
         }
-        else if(type.equals("doubleDamage"))
+        else if(type == Card.cardType.Cpu_Pick)
         {
-            hearts -= 2;
+            //random
         }
     }
     public void loseHeart()
@@ -42,6 +46,10 @@ public class Player
     {
         hearts++;
     }
+    public void resetHearts()
+    {
+		hearts = 3;
+	}
     public void addExtraTurn()
     {
         extraTurns++;
@@ -73,6 +81,27 @@ public class Player
     {
         return playerName;
     }
+    public void changePlayerName(String newName)
+    {
+    	playerName = newName;
+    }
+	public void draw(Graphics g, int posX, int posY)
+	{
+		Graphics2D g2 = (Graphics2D) g;
+		if(hearts == 4)
+			sprite = spriteList[4];
+		else if(hearts == 3)
+			sprite = spriteList[3];
+		else if(hearts == 2)
+			sprite = spriteList[2];
+		else if(hearts == 1)
+			sprite = spriteList[1];
+		else if(hearts == 0)
+			sprite = spriteList[0];
+		else
+			sprite = null;
+		g2.drawImage(sprite, posX, posY, null);
+	}
 }
 
 

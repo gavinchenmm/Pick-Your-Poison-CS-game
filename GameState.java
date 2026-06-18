@@ -7,20 +7,16 @@ public class GameState
 {
     public enum Phase
     {
-		START, CREDITS, //starting phase
+		START, CREDITS,INSTRUCTIONS, //starting/credit,name,ready up phase
         PLAYER1SETUP_POISON, PLAYER2SETUP_POISON, //placing the poison
         PLAYER1_EXTRAHEART, PLAYER2_EXTRAHEART, //players picking extra heart card
         PLAYER1_EXTRAPICK, PLAYER2_EXTRAPICK, // players picking extra pick crd
-        PLAYER1_COMPUTERPICK, PLAYER2_COMPUTERPICK, //players picking computer pick card
         PLAYER1PICK_POISON, PLAYER2PICK_POISON, //players picking poison
         RESULT;
     }
 	private Player player1;
 	public Player player2;
 	public Phase currentPhase;
-
-    public int p1Poisonchoice = 0;
-    public int p2Poisonchoice = 0;
 
     public GameState(Player p1, Player p2)
     {
@@ -33,22 +29,12 @@ public class GameState
         public void handleCardpicks(Card card)
         {
             Player currentPlayer = returnCurrentPlayer();
-            Player otherPlayer;
-
-            if(currentPlayer == player1)
-            {
-                otherPlayer = player2;
-            }
-            else
-            {
-                otherPlayer = player1;
-            }
+            Player otherPlayer = returnOppPlayer();
 
             //extra heart
             if(card.getCardType() == Card.cardType.E_Heart)
             {
-               /* currentPlayer.addHeart(1);*/
-                nextPhase();
+                currentPlayer.gainHeart();
             }
 
             //extra pick
@@ -56,35 +42,19 @@ public class GameState
             {
                 if(currentPlayer == player1)
                 {
-                    currentPhase = Phase.PLAYER1PICK_POISON;
+                    currentPhase = Phase.PLAYER2PICK_POISON;
                 }
                 else
                 {
-                    currentPhase = Phase.PLAYER2PICK_POISON;
+                    currentPhase = Phase.PLAYER1PICK_POISON;
                 }
             }
-
-            //computer picks
-            else if(card.getCardType()== Card.cardType.Cpu_Pick)
-            {
-                //random card selected
-
-            }
-
             //picking the poison card
             else if(card.getCardType()== Card.cardType.Poison)
             {
-                if(currentPlayer == player1)
-                {
-                    currentPhase = Phase.PLAYER1PICK_POISON;
-                   /* currentPlayer.loseHeart(1); */
-                }
-                else
-                {
-                    currentPhase = Phase.PLAYER2PICK_POISON;
-                   /* currentPlayer.loseHeart(1); */
-                }
+                   currentPlayer.loseHeart();
             }
+
             if (player1.isDead() || player2.isDead())
             {
                 currentPhase = Phase.RESULT;
@@ -101,8 +71,12 @@ public class GameState
 			}
 			else if(currentPhase == Phase.CREDITS)
 			{
-				currentPhase = Phase.PLAYER1SETUP_POISON;
+				currentPhase = Phase.INSTRUCTIONS;
 			}
+			else if(currentPhase == Phase.INSTRUCTIONS)
+			{
+				currentPhase = Phase.PLAYER1SETUP_POISON;
+            }
             else if(currentPhase == Phase.PLAYER1SETUP_POISON)
             {
                  currentPhase = Phase.PLAYER1_EXTRAHEART;
@@ -112,10 +86,6 @@ public class GameState
                 currentPhase = Phase.PLAYER1_EXTRAPICK;
             }
             else if(currentPhase == Phase.PLAYER1_EXTRAPICK)
-            {
-                currentPhase = Phase.PLAYER1_COMPUTERPICK;
-            }
-            else if(currentPhase == Phase.PLAYER1_COMPUTERPICK)
             {
                 currentPhase = Phase.PLAYER2SETUP_POISON;
             }
@@ -128,10 +98,6 @@ public class GameState
                 currentPhase = Phase.PLAYER2_EXTRAPICK;
             }
             else if(currentPhase == Phase.PLAYER2_EXTRAPICK)
-			{
-				currentPhase = Phase.PLAYER2_COMPUTERPICK;
-            }
-            else if(currentPhase == Phase.PLAYER2_COMPUTERPICK)
 			{
 				currentPhase = Phase.PLAYER1PICK_POISON;
             }
@@ -150,18 +116,36 @@ public class GameState
         {
             if(currentPhase == Phase.PLAYER1SETUP_POISON ||
             currentPhase == Phase.PLAYER1_EXTRAHEART ||
-            currentPhase == Phase.PLAYER1_COMPUTERPICK ||
+            currentPhase == Phase.PLAYER1_EXTRAPICK ||
             currentPhase == Phase.PLAYER1PICK_POISON)
             {
                 return player1;
             }
-
             else if(currentPhase == Phase.PLAYER2SETUP_POISON ||
             currentPhase == Phase.PLAYER2_EXTRAHEART ||
-            currentPhase == Phase.PLAYER2_COMPUTERPICK ||
+            currentPhase == Phase.PLAYER2_EXTRAPICK ||
             currentPhase == Phase.PLAYER2PICK_POISON)
             {
                 return player2;
+            }
+            else
+				return null;
+        }
+        public Player returnOppPlayer()
+        {
+            if(currentPhase == Phase.PLAYER1SETUP_POISON ||
+            currentPhase == Phase.PLAYER1_EXTRAHEART ||
+            currentPhase == Phase.PLAYER1_EXTRAPICK ||
+            currentPhase == Phase.PLAYER1PICK_POISON)
+            {
+                return player2;
+            }
+            else if(currentPhase == Phase.PLAYER2SETUP_POISON ||
+            currentPhase == Phase.PLAYER2_EXTRAHEART ||
+            currentPhase == Phase.PLAYER2_EXTRAPICK ||
+            currentPhase == Phase.PLAYER2PICK_POISON)
+            {
+                return player1;
             }
             else
 				return null;
@@ -181,10 +165,9 @@ public class GameState
         {
             return currentPhase;
         }
-
-        public void setCurrentPhase(Phase phase)
+        public void setCurrentPhase(Phase newPhase)
         {
-            currentPhase = phase;
+            currentPhase = newPhase;
         }
 
 
